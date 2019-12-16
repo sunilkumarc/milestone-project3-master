@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template
 from flask_pymongo import PyMongo
+from flask import request, redirect, url_for
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://daradona10:maradona1986@myfirstcluster-agrgt.mongodb.net/Milestone-Project3?retryWrites=true&w=majority"
@@ -69,8 +70,32 @@ def get_sides():
 
 @app.route("/add_meal")
 def add_meal():
-    return render_template("add_meal.html")       
+    course_types = mongo.db.recipes.find().distinct('course_type')
+    return render_template("add_meal.html", course_types=course_types)
 
+@app.route("/add_new_recipe", methods=['GET', 'POST'])
+def add_new_recipe():
+    name = request.form.get('recipe_name')
+    description = request.form.get('description')
+    prep_time = request.form.get('prep_time')
+    cooking_time = request.form.get('cooking_time')
+    makes = request.form.get('makes')
+    ingredients = request.form.get('ingredients')
+    method = request.form.get('method')
+    course_type = request.form.get('course_type')
+    
+    mongo.db.recipes.insert_one({
+        'name': name,
+        'description': description,
+        'prep_time': prep_time,
+        'cooking_time': cooking_time,
+        'makes': makes,
+        'ingredients': ingredients,
+        'method': method,
+        'course_type': course_type
+    })
+
+    return redirect(url_for('add_meal'))
 
 if __name__ == "__main__":
     app.run(host=os.environ.get("IP"),
