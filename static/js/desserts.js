@@ -13,8 +13,3 @@ $(document).ready(function() {
         deleteDishButtonClick(ev);
     });
 });
-
-var loadDishes = function() {
-    html_content = get_html_content_for_dishes(dishes);
-    $("#desserts-items-list").html(html_content);
-}
